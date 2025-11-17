@@ -1,2 +1,2 @@
 # GenreClassifier
-This project takes in the values of the GTZAN dataset, a dataset that contains songs across genres: blues, classical, country, disco, hip-hop, jazz, metal, pop, reggae, and rock. 
+This project takes in the values of the GTZAN dataset, a dataset that contains songs across genres: blues, classical, country, disco, hip-hop, jazz, metal, pop, reggae, and rock. The goal of the project is to create a basic UI that allows for a song to be passed in from an external source, from there, a transformers pipeline determines the genre of the inputted song which triggers another pipeline to assemble songs from the GTZAN dataset that are in the same genre.
