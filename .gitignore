@@ -210,3 +210,10 @@ __marimo__/
 .git_ignore
 
 .DS_Store
+
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+cpython-312.pyc
