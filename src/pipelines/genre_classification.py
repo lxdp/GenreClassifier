@@ -1,7 +1,7 @@
 import os
 import time
 
-from typing import Tuple, Optional
+from typing import Optional
 
 # Utils
 from ..utils.loggers import GlobalTranslatorLogger
@@ -11,7 +11,6 @@ from ..utils.constants.genre_classification import genre_classification_output
 
 # Schemas
 from ..schemas.inputs.file_data import AudioFile
-from ..schemas.outputs.file_data import AiGenre
 from ..schemas.outputs.model_outputs import GenreList, GenreConfidence
 
 class GenreClassification:
@@ -28,13 +27,11 @@ class GenreClassification:
     def run_pipeline(self) -> GenreList:
 
         genre_list = self.genre_classification(self.audio_data)
-        valid_genre_list = self.validate_classification(genre_list.GenreList[0], self.audio_data)
+        valid_genre_list = self.validate_classification(genre_list[0], self.audio_data)
         if valid_genre_list:
-            matched_genre_list = self.get_similar_songs(valid_genre_list)
+            return valid_genre_list
         else:
-            matched_genre_list = self.get_similar_songs(genre_list)
-        
-        return matched_genre_list
+            return genre_list
     
     def genre_classification(self, data: AudioFile) -> GenreList:
 
@@ -55,7 +52,7 @@ class GenreClassification:
             schema_output = GenreConfidence(Score=genre_confidence['score'], Label=genre_confidence['label'])
             genre_list.append(schema_output)
         
-        return GenreList(GenreList=genre_list)
+        return GenreList(root=genre_list)
 
     def validate_classification(self, dominant_genre: GenreConfidence, data: AudioFile) -> Optional[GenreList]:
 
@@ -76,9 +73,9 @@ class GenreClassification:
             schema_output = GenreConfidence(Score=genre_confidence['score'], Label=genre_confidence['label'])
             genre_list.append(schema_output)
         
-        return GenreList(GenreList=genre_list)
-    
-    def get_similar_songs(self, genre_list) -> GenreList:
+        return GenreList(root=genre_list)
+        
+
 
 
 

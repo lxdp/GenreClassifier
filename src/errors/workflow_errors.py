@@ -20,16 +20,15 @@ class WorkflowValidator:
     
     def audio_files_validation(self, file_list: AudioFiles) -> Optional[AudioFiles]:
         try:
-            audio_files_list = AudioFiles(AudioFiles=file_list)
-            AudioFiles.model_validate(audio_files_list)
-            return audio_files_list
+            AudioFiles.model_validate(file_list)
+            return file_list
         except Exception as error:
             self.logger.log_exception("AudioFileListValidationFailure", f"The following error occured during validation: {error}.")
             return
     
-    def ai_pipeline_validation(self, audio_data: AudioFile, ai_pipeline: AiPipeline, folder_path: str, user_defined_file: str) -> Optional[SimilarTopicAudioFiles]:
+    def ai_pipeline_validation(self, audio_files_list: AudioFiles, ai_pipeline: AiPipeline, folder_path: str, user_defined_file: str) -> Optional[SimilarTopicAudioFiles]:
         try:
-            matched_audios = ai_pipeline.run_pipeline(audio_data, folder_path, user_defined_file)
+            matched_audios = ai_pipeline.run_pipeline(audio_files_list, folder_path, user_defined_file)
             return matched_audios
         except Exception as error:
             self.logger.log_exception("AiPipelineValidationFailure", f"The following error occured during validation: {error}.")

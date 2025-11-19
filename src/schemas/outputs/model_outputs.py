@@ -30,3 +30,12 @@ class GenreList(RootModel):
     
     def __getitem__(self, item):
         return self.root[item]
+
+class GenreLists(RootModel):
+    root: List[GenreList]
+
+    def __iter__(self):
+        return iter(self.root)
+    
+    def __getitem__(self, item):
+        return self.root[item]

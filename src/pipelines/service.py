@@ -46,8 +46,7 @@ class GlobalWorkflow:
             self.logger.log_info("AudioFileFailure", "Audio files failed to meet the specified schema.")
             return
         
-        for audio_data in valid_audio_files_list.AudioFiles:
-            matched_genre_data = self.workflow_validator.ai_pipeline_validation(audio_data, self.ai_pipeline, self.folder_path, user_defined_file)
+        matched_genre_data = self.workflow_validator.ai_pipeline_validation(audio_files_list, self.ai_pipeline, self.folder_path, user_defined_file)
     
     def extract_files_with_genres(self) -> AudioFiles:
         audio_files = []
@@ -58,4 +57,4 @@ class GlobalWorkflow:
                 genre_file_list = os.listdir(os.path.join(self.folder_path, genre))
                 for file_name in genre_file_list:
                     audio_files.append(AudioFile(AudioName=file_name, Genre=genre))
-        return audio_files
+        return AudioFiles(root=audio_files)

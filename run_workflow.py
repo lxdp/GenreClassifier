@@ -14,4 +14,4 @@ if __name__=="__main__":
         global_workflow = GlobalWorkflow(genre, audio_file)
         global_workflow.run_workflow()
     except IndexError as error:
-        GlobalTranslatorLogger.log_exception("CommandLineArgumentReadingFailure", "The necessary values in the command line were not provided")
+        GlobalTranslatorLogger.log_exception("CommandLineArgumentReadingFailure", f"The following error occured: {error}")
