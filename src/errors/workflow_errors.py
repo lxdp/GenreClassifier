@@ -8,7 +8,7 @@ from ..utils.loggers import GlobalTranslatorLogger
 
 # Schemas
 from ..schemas.inputs.file_data import AudioFiles, AudioFile
-from ..schemas.outputs.model_outputs import SimilarTopicAudioFiles
+from ..schemas.outputs.model_outputs import GenreLists
 
 # Pipelines
 from ..pipelines.ai_models import AiPipeline
@@ -26,13 +26,23 @@ class WorkflowValidator:
             self.logger.log_exception("AudioFileListValidationFailure", f"The following error occured during validation: {error}.")
             return
     
-    def ai_pipeline_validation(self, audio_files_list: AudioFiles, ai_pipeline: AiPipeline, folder_path: str, user_defined_file: str) -> Optional[SimilarTopicAudioFiles]:
+    def ai_pipeline_validation(self, audio_files_list: AudioFiles, ai_pipeline: AiPipeline, folder_path: str, user_defined_file: str) -> Optional[GenreLists]:
         try:
             matched_audios = ai_pipeline.run_pipeline(audio_files_list, folder_path, user_defined_file)
             return matched_audios
         except Exception as error:
             self.logger.log_exception("AiPipelineValidationFailure", f"The following error occured during validation: {error}.")
             return
+    
+    def struct_file_validation(self, user_file_path: str) -> Optional[AudioFile]:
+        try:
+            genre, file_name = user_file_path.split("/")
+            struct_data = AudioFile(AudioName=file_name, Genre=genre)
+            return struct_data
+        except Exception as error:
+            self.logger.log_exception("StructFileValidationFailure", f"The following error occuring during validation {error}")
+            return
+        
 
 class BackendValidator:
 

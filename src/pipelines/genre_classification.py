@@ -15,23 +15,25 @@ from ..schemas.outputs.model_outputs import GenreList, GenreConfidence
 
 class GenreClassification:
 
-    def __init__(self, audio_data: AudioFile, pipe_config: BasePipelineConfiguration, folder_path: str, user_defined_file: str):
+    def __init__(self, audio_data: AudioFile, pipe_config: BasePipelineConfiguration, folder_path: str):
         self.logger = GlobalTranslatorLogger(pipe_name="GenreClassificationPipeline")
         self.audio_data = audio_data
         self.pipe_config = pipe_config
         self.folder_path = folder_path
-        self.user_defined_file = user_defined_file
 
         self.pipeline = self.pipe_config.ai_model_pipelines.genre_classification_entities.pipeline
     
-    def run_pipeline(self) -> GenreList:
-
-        genre_list = self.genre_classification(self.audio_data)
-        valid_genre_list = self.validate_classification(genre_list[0], self.audio_data)
-        if valid_genre_list:
-            return valid_genre_list
+    def run_pipeline(self) -> Optional[GenreList]:
+        if self.audio_data.AudioName != "jazz.00054.wav":
+            genre_list = self.genre_classification(self.audio_data)
+            valid_genre_list = self.validate_classification(genre_list[0], self.audio_data)
+            if valid_genre_list:
+                return valid_genre_list
+            else:
+                return genre_list
         else:
-            return genre_list
+            self.logger.log_info("MalformedSoundFile", "jazz.0054.wav is malformed.")
+            return
     
     def genre_classification(self, data: AudioFile) -> GenreList:
 
@@ -41,6 +43,7 @@ class GenreClassification:
             file_name = data.AudioName
             genre_file_path = os.path.join(self.folder_path, data.Genre)
             start_time = time.time()
+            
             genre_classification = self.pipeline(os.path.join(genre_file_path, file_name))
             inference_time = time.time() - start_time
             self.logger.log_info("GenreClassificationInferenceTime", f"The genre classifier took: {inference_time:.2f} seconds.")

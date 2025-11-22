@@ -39,6 +39,12 @@ class GlobalWorkflow:
         if not user_defined_file:
             self.logger.log_info("UserFileFailure", "You must define a valid audio file path.")
             return
+        
+        struct_user_defined_file = self.workflow_validator.struct_file_validation(self.user_defined_path)
+        if not struct_user_defined_file:
+            self.logger.log_info("LoadAudioFileFailure", "Unsuccessfully extracted file information.")
+            return
+
 
         audio_files_list = self.extract_files_with_genres()
         valid_audio_files_list = self.workflow_validator.audio_files_validation(audio_files_list)
@@ -46,8 +52,10 @@ class GlobalWorkflow:
             self.logger.log_info("AudioFileFailure", "Audio files failed to meet the specified schema.")
             return
         
-        matched_genre_data = self.workflow_validator.ai_pipeline_validation(audio_files_list, self.ai_pipeline, self.folder_path, user_defined_file)
-    
+        matched_genre_data = self.workflow_validator.ai_pipeline_validation(audio_files_list, self.ai_pipeline, self.folder_path, struct_user_defined_file)
+        if not matched_genre_data:
+            self.logger.log_info("GenreSearchFailure", "Failed to retrieve songs of the same genre as user audio file")
+
     def extract_files_with_genres(self) -> AudioFiles:
         audio_files = []
         genre_list = os.listdir(self.folder_path)
